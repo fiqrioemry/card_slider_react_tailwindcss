@@ -2,25 +2,25 @@ import { useState, useEffect, useRef } from "react";
 
 function App() {
   const totalBox = 18;
-  const [products, setProducts] = useState(
-    Array.from({ length: totalBox }, (_, i) => i + 1)
-  );
+  const products = Array.from({ length: totalBox }, (_, i) => i + 1);
   const [value, setValue] = useState(0);
   const [divWidth, setDivWidth] = useState(0);
   const absoluteDivRef = useRef(null);
 
+  // mengatur jumlah card yang ditampilkan dalam lebar desktop yang berbeda2
   const getSlideWidth = () => {
-    if (divWidth >= 1024) return divWidth / 5; // lg: 1/5 dari lebar div
-    if (divWidth >= 768) return divWidth / 4; // md: 1/4 dari lebar div
-    if (divWidth >= 640) return divWidth / 3; // sm: 1/3 dari lebar div
-    return divWidth / 2; // xs: 1/2 dari lebar div
+    if (divWidth >= 1024) return divWidth / 5;
+    if (divWidth >= 768) return divWidth / 4;
+    if (divWidth >= 640) return divWidth / 3;
+    return divWidth / 2;
   };
 
+  // mengatur jumlah card slider dalam sekali slide (jumlah diatur sesuai dengan responsive)
   const getNumPerSlide = () => {
-    if (divWidth >= 1024) return 5; // lg: 5 items
-    if (divWidth >= 768) return 4; // md: 4 items
-    if (divWidth >= 640) return 3; // sm: 3 items
-    return 2; // xs: 2 items
+    if (divWidth >= 1024) return 5;
+    if (divWidth >= 768) return 4;
+    if (divWidth >= 640) return 3;
+    return 2;
   };
 
   const handleNext = () => {
@@ -47,30 +47,19 @@ function App() {
     const updateDivWidth = () => {
       if (absoluteDivRef.current) {
         const { width } = absoluteDivRef.current.getBoundingClientRect();
-        setDivWidth(width); // Set lebar div yang diambil
+        setDivWidth(width); // <-- Set lebar div yang diambil menyesuaikan dengan lebar container card
       }
     };
 
-    updateDivWidth(); // Update saat pertama kali dirender
-    window.addEventListener("resize", updateDivWidth); // Update saat ukuran jendela berubah
+    updateDivWidth(); //<--  Update saat pertama kali dirender
+    window.addEventListener("resize", updateDivWidth); // <-- Update saat ukuran jendela berubah
 
-    return () => window.removeEventListener("resize", updateDivWidth); // Hapus listener saat unmount
+    return () => window.removeEventListener("resize", updateDivWidth); //<-- Hapus listener saat unmount
   }, []);
 
   useEffect(() => {
-    setValue(0); // Reset posisi slider saat lebar div berubah
+    setValue(0); //<-- Reset posisi slider saat lebar div berubah
   }, [divWidth]);
-
-  const fetchProducts = async () => {
-    const response = await fetch("https://dummyjson.com/products");
-    const data = await response.json();
-    console.log(data.products);
-    setProducts(data.products);
-  };
-
-  useEffect(() => {
-    fetchProducts();
-  });
 
   return (
     <main className="overflow-hidden px-2">
@@ -81,7 +70,7 @@ function App() {
 
         <div className="space-y-2 h-[200px]">
           <div
-            ref={absoluteDivRef} // Gunakan referensi di sini
+            ref={absoluteDivRef} // <-- gunakan untuk mengambil lebar
             className="relative whitespace-nowrap h-[170px] overflow-x-hidden bg-red-500"
           >
             <div
@@ -96,8 +85,8 @@ function App() {
                   key={index}
                 >
                   <div className="py-2 px-2">
-                    <div className="bg-cyan-500 rounded-md flex items-center justify-center uppercase text-xl">
-                      <img className="h-[150px]" src={item.thumbnail} alt="" />
+                    <div className="bg-cyan-500 h-[150px] rounded-md flex items-center justify-center uppercase text-xl">
+                      {item}
                     </div>
                   </div>
                 </div>
